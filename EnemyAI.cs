@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
@@ -67,12 +67,17 @@ public class EnemyAI : MonoBehaviour
             yield break;
         }
 
+        if (pathIsEnded)
+        {
+            yield return new WaitForSeconds(0.01f);
+        }
+
         //만약에 AI가 Player에 도달하여 Path의 end까지 도달한 다음 다시 새로운 Path를 생성해야 될 경우 FixedUpdate에서 PathIsEnded가 false가
         //될때까지 코루틴은 while문에서 대기, 무한 반복하면 게임이 멈추므로 일정시간의 딜레이를 준다.
-        while (pathIsEnded)
-        {
-            yield return new WaitForSeconds(0.1f);
-        }
+        //while (pathisended)
+        //{
+        //    yield return new waitforseconds(0.1f);
+        //}
 
         seeker.StartPath(transform.position, target.position, OnPathComplete);
         yield return new WaitForSeconds( 1.0f / updateRate);
