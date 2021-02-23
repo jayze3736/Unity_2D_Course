@@ -4,9 +4,9 @@ using UnityEngine;
 using Pathfinding;
 
 /* 1. 코루틴에서 yield break는 완전한 코루틴 종료를 의미한다.
-  * 2. update 문에서 return은 Update문의 처음으로 돌아가는 명령어이다.
-  * 
-  */
+ * 2. update 문에서 return은 Update문의 처음으로 돌아가는 명령어이다.
+ * 
+ */
 
 [RequireComponent(typeof(Seeker))]
 [RequireComponent(typeof(Rigidbody2D))]
@@ -18,6 +18,9 @@ public class EnemyAI : MonoBehaviour
 
     //path를 update하는 빈도 또는 속도
     public float updateRate = 2f;
+
+    //캐릭터를 찾는 속도
+    public float SearchRate = 2f;
 
     //Caching
     private Seeker seeker;
@@ -49,37 +52,59 @@ public class EnemyAI : MonoBehaviour
         if(target == null)
         {
             Debug.Log("target is null");
-            return;
-        }
+            StartCoroutine("SearchForPlayer");
 
+        }
+        
         // start 부터 end까지 path를 계산하고 그 결과(path)를 세번째 함수의 인자로 전달하고 호출한다.
         //(calculate path from start to end and return the result to OnPathComplete func
         seeker.StartPath(transform.position, target.position, OnPathComplete);
         StartCoroutine("UpdatePath");
+        
+
+        
 
     }
+
+    IEnumerator SearchForPlayer()
+    {
+        GameObject sResult = GameObject.FindGameObjectWithTag("Player");
+        if(sResult == null)
+        {
+            //찾을때까지 계속 호출
+
+            
+            yield return new WaitForSeconds(1 / SearchRate);
+            
+            StartCoroutine("SearchForPlayer");
+         
+        }
+        else
+        {
+            target = sResult.transform;
+            //target이 업데이트 되면 Path도 다시 업데이트 해야되기때문에
+            seeker.StartPath(transform.position, target.position, OnPathComplete);
+            StartCoroutine("UpdatePath");
+           
+            
+        }
+
+    }
+
 
     IEnumerator UpdatePath()
     {
         if (target == null)
         {
-            Debug.Log("target is null");
-            yield break;
-        }
-
-        if (pathIsEnded)
-        {
+            Debug.Log("Error in UpdatePath");
+            StartCoroutine("SearchForPlayer");
             yield return new WaitForSeconds(0.01f);
         }
 
-        //만약에 AI가 Player에 도달하여 Path의 end까지 도달한 다음 다시 새로운 Path를 생성해야 될 경우 FixedUpdate에서 PathIsEnded가 false가
-        //될때까지 코루틴은 while문에서 대기, 무한 반복하면 게임이 멈추므로 일정시간의 딜레이를 준다.
-        //while (pathisended)
-        //{
-        //    yield return new waitforseconds(0.1f);
-        //}
+       
 
         seeker.StartPath(transform.position, target.position, OnPathComplete);
+        // 코루틴을 재귀적으로 호출할때는 반드시 WaitForSeconds를 넣을 것, 그렇지않으면 무한 반복이 되므로 비정상적으로 종료됨
         yield return new WaitForSeconds( 1.0f / updateRate);
         StartCoroutine("UpdatePath");
     }
@@ -89,9 +114,11 @@ public class EnemyAI : MonoBehaviour
     {
         if(path == null)
         {
+            //path를 찾지 못하면 Update 문을 종료(즉, 이 조건문 아래의 명령어가 실행되지 않도록 함)
             return;
         }
 
+        //pathIsEnded는 필요없는 변수이지만 코드 이해가 쉬울 것 같아 넣음
         pathIsEnded = false;
 
         float dist = Vector3.Distance(transform.position, path.vectorPath[currentWaypoint]);
@@ -132,6 +159,7 @@ public class EnemyAI : MonoBehaviour
 
     }
 
+    
     
 
 
