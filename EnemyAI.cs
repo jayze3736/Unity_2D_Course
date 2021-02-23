@@ -5,7 +5,7 @@ using Pathfinding;
 
 /* 1. 코루틴에서 yield break는 완전한 코루틴 종료를 의미한다.
  * 2. update 문에서 return은 Update문의 처음으로 돌아가는 명령어이다.
- * 
+ * *
  */
 
 [RequireComponent(typeof(Seeker))]
