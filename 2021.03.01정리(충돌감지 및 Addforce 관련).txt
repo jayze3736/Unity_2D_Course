@@ -1,0 +1,27 @@
+정리한 것:
+1.
+OncollisionEnter2D(): 오브젝트 충돌시 실행하는 함수이다.
+OnTriggerEnter2D():
+Collider 컴포넌트의 IsTrigger가 활성화되면, 물리적 충돌이 일어나도 물리적 상호작용을 무시한다. 즉, 이벤트는 발생하되 충돌을 무시
+조금더 충돌시 효과나 처리를 깔끔하게 하려면, Trigger를 셋하고 Addforce 같은 정확한 메소드로 충격을 주는 이펙트를 만드는게 선명한 효과를 얻을 수 있을 듯
+
+
+2.
+OncollisionEnter2D()함수는 RigidBody 컴포넌트가 있어야 충돌로 인식한다. 
+질문: Freeze x,y 그리고 z rotation 이 활성화된 오브젝트가 여럿이 있을때 RigidBody는 퍼포먼스에 얼마나 악영향을 주는가
+
+3.https://docs.unity3d.com/ScriptReference/Collider2D.ClosestPoint.html
+
+4. Trigger 발생 텀: https://m.blog.naver.com/PostView.nhn?blogId=lyw94k&logNo=221271505333&proxyReferer=https:%2F%2Fwww.google.com%2F
+
+
+5. call by value를 통한 함수의 인자 전달시, 기본 자료형과 달리 객체를 전달할 경우, 참조를 전달하게 된다. 
+https://wikidocs.net/265
+
+6. forceMode로 force와 Impulse를 선택할 수 있는데, force는 지속적인 힘을 가할 경우, impulse는 짧은 시간동안 속도의 변화를 줄 경우에 해당한다.
+
+7. Addforce는 FixedUpdate에서 실행되지않으면 사용할 수 없다.
+
+8. WaitForEndofFrame, WaitForFixedUpdate
+http://theeye.pe.kr/archives/tag/waitforfixedupdate
+
